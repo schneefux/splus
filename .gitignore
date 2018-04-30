@@ -1,3 +1,6 @@
+# Prevent API keys to be accidentally commited
+etc/google
+
 # JetBrains
 .idea/
 
