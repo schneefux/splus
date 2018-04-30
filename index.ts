@@ -1,7 +1,14 @@
-import {get} from 'http';
 import {readFile} from 'fs';
 import {SplusParser} from './SplusParser';
-import {createEvent, listEvents} from "./GoogleCalendar";
+let createEvent = (arg) => {};
+let commit = () => {};
+if (process.argv.includes('ics')) {
+    createEvent = require('./ICal').createEvent;
+    commit = require('./ICal').commit;
+} else {
+    createEvent = require('./GoogleCalendar').createEvent;
+}
+
 
 const splusUrl = 'http://splus.ostfalia.de/semesterplan123.php?id=1362F014835FFFD0F67159E302EC1A3C&identifier=%23SPLUS7A3292';
 
@@ -26,7 +33,7 @@ readFile('sample.htm', (err, data) => {
         return lecture.title.indexOf('Kompetenzen') === -1;
     });
 
-    lectures.forEach(lec => {
+    lectures.forEach((lec, index) => {
         let beginDate = new Date(baseDate);
 
         beginDate.setDate(beginDate.getDate() + lec.day);
@@ -52,6 +59,11 @@ readFile('sample.htm', (err, data) => {
                 useDefault: false
             }
         });
+
+        // TODO
+        if (index == lectures.length - 1) {
+            commit();
+        }
     })
 });
 
