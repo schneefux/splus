@@ -1,14 +1,19 @@
 import * as fs from 'fs';
 import * as readline from 'readline';
-import {google} from "googleapis";
+
+import {google} from 'googleapis';
+
+import {ISink} from './ISink';
+import {IEvent} from '../core/IEvent';
+
 
 const OAuth2Client = google.auth.OAuth2;
 const scopes = ['https://www.googleapis.com/auth/calendar'];
 
-const credentialsPath = 'client_secret.json';
-const tokenPath = 'credentials.json';
+const credentialsPath = 'etc/google/client_secret.json';
+const tokenPath = 'etc/google/credentials.json';
 
-export const clientPromise = new Promise((resolve, reject) => {
+const clientPromise = new Promise((resolve, reject) => {
     fs.readFile(credentialsPath, (err, data) => {
         if (err) return reject(err);
 
@@ -49,42 +54,47 @@ export const clientPromise = new Promise((resolve, reject) => {
     });
 });
 
-export const calendarPromise = clientPromise.then(auth => google.calendar({version: 'v3', auth}));
+
+const calendarPromise = clientPromise.then(auth => google.calendar({version: 'v3', auth}));
 
 
-export async function listEvents() {
-    const calendar = await calendarPromise;
-    calendar.events.list({
-        calendarId: 'primary',
-        timeMin: (new Date()).toISOString(),
-        maxResults: 10,
-        singleEvents: true,
-        orderBy: 'startTime',
-    }, (err, data) => {
-        if (err) return console.log('The API returned an error: ' + err);
-        const events = data.data.items;
-        if (events.length) {
-            console.log('Upcoming 10 events:');
-            events.map((event, i) => {
-                const start = event.start.dateTime || event.start.date;
-                console.log(`${start} - ${event.summary}`);
+export class GoogleCalendarSink implements ISink {
+    private _calendarId: string;
+
+    constructor(calendarId = 'primary') {
+        this._calendarId = calendarId;
+    }
+
+    createEvent(event: IEvent): Promise<void> {
+        const googleEvent = {
+            summary: event.summary,
+            description: event.description,
+            location: event.location,
+            start: {
+                dateTime: event.start.toISOString()
+            },
+            end: {
+                dateTime: event.end.toISOString()
+            },
+            reminders: {
+                useDefault: false
+            }
+        };
+
+        return calendarPromise.then(calendar => {
+            return new Promise<void>((resolve, reject) => {
+                calendar.events.insert({
+                    calendarId: this._calendarId,
+                    resource: googleEvent,
+                }, function (err, event) {
+                    if (err) return reject(err);
+                    resolve();
+                });
             });
-        } else {
-            console.log('No upcoming events found.');
-        }
-    });
-}
+        });
+    }
 
-export function createEvent(event, calendarId = 'primary') {
-    return calendarPromise.then(calendar => {
-        return new Promise((resolve, reject) => {
-            calendar.events.insert({
-                calendarId: calendarId,
-                resource: event,
-            }, function (err, event) {
-                if (err) return reject(err);
-                resolve(event);
-            });
-        })
-    });
+    commit(): Promise<void> {
+        return Promise.resolve();
+    }
 }
