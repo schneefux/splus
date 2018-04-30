@@ -3,7 +3,7 @@ import * as ical from 'ical-generator';
 import * as crypto from 'crypto';
 import * as fs from 'fs';
 
-const TARGET_FILE = 'docs/informatik1.ics';
+const TARGET_FILE = 'etc/informatik1.ics';
 const DOMAIN = 'schneefux.github.io'; // TODO config management
 
 const sha256 = (x) => crypto.createHash('sha256').update(x, 'utf8').digest('hex');

@@ -22,7 +22,7 @@ get(splusUrl, (res) => {
 
 const baseDate = new Date(2018, 3, 23);
 
-readFile('sample.htm', (err, data) => {
+readFile('etc/sample.htm', (err, data) => {
     const lectures = new SplusParser(data.toString()).getLectures(lecture => {
         // Filter some lectures out
         if (lecture.title === '') return false;
