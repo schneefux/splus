@@ -9,12 +9,18 @@
     "start": "ts-node src/index.ts"
   },
   "dependencies": {
+    "bluebird": "^3.5.1",
     "cheerio": "^1.0.0-rc.2",
     "googleapis": "^27.0.0",
-    "ical-generator": "^0.2.10"
+    "ical-generator": "^0.2.10",
+    "moment": "^2.22.1",
+    "request": "^2.85.0",
+    "request-promise-native": "^1.0.5"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.7",
+    "@types/request": "^2.47.0",
+    "@types/request-promise-native": "^1.0.14",
     "ts-node": "^6.0.0",
     "typescript": "^2.8.3"
   }

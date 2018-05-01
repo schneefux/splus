@@ -13,8 +13,8 @@ export interface SplusConfig {
 }
 
 export const config: SplusConfig = {
-    source: new HttpSource('http://splus.ostfalia.de/semesterplan123.php?id=1362F014835FFFD0F67159E302EC1A3C&identifier=%23SPLUS7A3292'),
-    sink: new IcalSink('out.ics'),
+    source: new HttpSource('#SPLUS7A3292'),
+    sink: new IcalSink('docs/informatik1.ics'),
 
     lectureFilter: lecture => {
         // Filter some lectures out

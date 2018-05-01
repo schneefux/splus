@@ -1,22 +1,23 @@
-import {get} from 'http';
+import * as request from 'request-promise-native';
 
 import {ISource} from './ISource';
 
 export class HttpSource implements ISource {
-    private _uri: string;
+    private _base_uri = 'http://splus.ostfalia.de/semesterplan123.php';
 
-    constructor(path: string) {
-        this._uri = path;
+    constructor(private _course: string) {
     }
 
-    getData(): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            get(this._uri, (res) => {
-                let data = '';
-                res.on('error', reject);
-                res.on('data', chunk => data += chunk);
-                res.on('end', () => resolve(data));
-            });
+    getData(weekOfYear: number): PromiseLike<string> {
+        return request({
+            method: 'POST',
+            uri: this._base_uri,
+            qs: {
+                identifier: this._course,
+            },
+            formData: {
+                weeks: weekOfYear.toString(),
+            },
         });
     }
 }

@@ -1,3 +1,3 @@
 export interface ISource {
-    getData(): Promise<string>;
+    getData(weekOfYear: number): PromiseLike<string>;
 }

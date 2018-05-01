@@ -1,39 +1,35 @@
+import * as moment from 'moment';
 import {SplusParser} from './core/SplusParser';
 
 import {config} from './config';
 import {IEvent} from './core/IEvent';
 
-function getMonday(date: Date) {
-    const day = date.getDay() || 7;
-    if (day !== 1) {
-        date.setHours(-24 * (day - 1));
-    }
+const baseDate = moment().startOf('week');
 
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-}
-
-const baseDate = getMonday(new Date());
-
-config.source.getData().then(async data => {
+config.source.getData(baseDate.weeks()).then(async data => {
     const lectures = new SplusParser(data.toString()).getLectures(config.lectureFilter);
 
     for (let i = 0; i < lectures.length; i++) {
         const lec = lectures[i];
 
-        let beginDate = new Date(baseDate);
-        beginDate.setDate(beginDate.getDate() + lec.day);
-        beginDate.setMinutes(beginDate.getMinutes() + lec.begin * 60);
+        let beginDate = baseDate.clone();
+        beginDate.add(moment.duration({
+            days: lec.day + 1, // for moment: 1 = Monday
+            hours: lec.begin,
+        }));
 
-        let endDate = new Date(baseDate);
-        endDate.setDate(endDate.getDate() + lec.day);
-        endDate.setMinutes(endDate.getMinutes() + lec.end * 60);
+        let endDate = baseDate.clone();
+        endDate.add(moment.duration({
+            days: lec.day + 1,
+            hours: lec.end,
+        }));
 
         const event: IEvent = {
             summary: lec.title,
             description: lec.lecturer + (lec.info !== '' ? ' - ' : '') + lec.info,
             location: lec.room,
-            start: beginDate,
-            end: endDate
+            start: beginDate.toDate(),
+            end: endDate.toDate(),
         };
 
         await config.sink.createEvent(event);

@@ -6,11 +6,10 @@ export class FileSource implements ISource {
     private _path: string;
     private _data: string = null;
 
-    constructor(path: string) {
-        this._path = path;
+    constructor(course: string) {
     }
 
-    getData(): Promise<string> {
+    getData(weekOfYear: number): Promise<string> {
         if (this._data) {
             return Promise.resolve(this._data);
         }
