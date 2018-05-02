@@ -13,7 +13,7 @@ export interface SplusConfig {
 
 export const config: SplusConfig = {
     course: '#SPLUS7A3292',
-    sink: new IcalSink('docs/informatik1.ics'),
+    sink: new IcalSink('kalender/informatik1.ics'),
     prefetchWeeks: 4,
 
     lectureFilter: lecture => {
