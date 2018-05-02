@@ -9,7 +9,6 @@
     "start": "ts-node src/index.ts"
   },
   "dependencies": {
-    "bluebird": "^3.5.1",
     "cheerio": "^1.0.0-rc.2",
     "googleapis": "^27.0.0",
     "ical-generator": "^0.2.10",
