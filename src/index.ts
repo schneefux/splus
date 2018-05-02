@@ -1,13 +1,13 @@
 import * as moment from 'moment';
-import {SplusParser} from './core/SplusParser';
 
 import {config} from './config';
+import {SplusApi} from './core/SplusApi';
 import {IEvent} from './core/IEvent';
 
-const baseDate = moment().startOf('week');
-
-config.source.getData(baseDate.weeks()).then(async data => {
-    const lectures = new SplusParser(data.toString()).getLectures(config.lectureFilter);
+async function main() {
+    const baseDate = moment().startOf('week');
+    const unfilteredLectures = await SplusApi.getData(config.course, baseDate.weeks());
+    const lectures = unfilteredLectures.filter(config.lectureFilter);
 
     for (let i = 0; i < lectures.length; i++) {
         const lec = lectures[i];
@@ -38,4 +38,6 @@ config.source.getData(baseDate.weeks()).then(async data => {
     }
 
     await config.sink.commit();
-});
+}
+
+main();

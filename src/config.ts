@@ -1,19 +1,17 @@
-import {ISource} from './sources/ISource';
 import {ISink} from './sinks/ISink';
 import {ILectureFilter} from './core/ILecture';
 
-import {HttpSource} from './sources/HttpSource';
 import {IcalSink} from './sinks/IcalSink';
 
 export interface SplusConfig {
-    source: ISource;
+    course: string;
     sink: ISink;
 
     lectureFilter?: ILectureFilter;
 }
 
 export const config: SplusConfig = {
-    source: new HttpSource('#SPLUS7A3292'),
+    course: '#SPLUS7A3292',
     sink: new IcalSink('docs/informatik1.ics'),
 
     lectureFilter: lecture => {

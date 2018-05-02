@@ -1,5 +1,5 @@
 import {load} from 'cheerio';
-import {ILecture, ILectureFilter} from './ILecture';
+import {ILecture} from './ILecture';
 
 interface IBlock {
     title: string;
@@ -32,7 +32,7 @@ export class SplusParser {
         this.parseTable();
     }
 
-    getLectures(filter?: ILectureFilter): ILecture[] {
+    getLectures(): ILecture[] {
         let lectures: ILecture[] = [];
 
         for (let i = 0; i < this.blocks.length; i++) {
@@ -54,9 +54,7 @@ export class SplusParser {
                         lecturer: block.lecturer
                     };
 
-                    if(!filter || filter(lecture)) {
-                        lectures.push(lecture);
-                    }
+                    lectures.push(lecture);
                 }
             }
         }
