@@ -6,6 +6,7 @@ import {IcalSink} from './sinks/IcalSink';
 export interface SplusConfig {
     course: string;
     sink: ISink;
+    prefetchWeeks: number;
 
     lectureFilter?: ILectureFilter;
 }
@@ -13,6 +14,7 @@ export interface SplusConfig {
 export const config: SplusConfig = {
     course: '#SPLUS7A3292',
     sink: new IcalSink('docs/informatik1.ics'),
+    prefetchWeeks: 4,
 
     lectureFilter: lecture => {
         // Filter some lectures out
