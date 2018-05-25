@@ -4,7 +4,7 @@ import {ILectureFilter} from './core/ILecture';
 import {IcalSink} from './sinks/IcalSink';
 
 export interface SplusConfig {
-    course: string;
+    courses: string[];
     sink: ISink;
     prefetchWeeks: number;
 
@@ -12,18 +12,21 @@ export interface SplusConfig {
 }
 
 export const config: SplusConfig = {
-    course: '#SPLUS7A3292',
+    courses: ['#SPLUS7A3292', '#SPLUS7A3280'],
     sink: new IcalSink('kalender/informatik1.ics'),
     prefetchWeeks: 4,
 
-    lectureFilter: lecture => {
-        // Filter some lectures out
-        if (lecture.title === '') return false;
-        if (lecture.title.indexOf('Mathe-Cafe') !== -1) return false;
-        if (lecture.title.indexOf('Mathe-Repetitorium') !== -1) return false;
-        if (lecture.title.indexOf('Informatik-Lounge') !== -1) return false;
-        if (lecture.title.indexOf('Grundlagen des Programmierens') !== -1) return false;
-        if (lecture.title.indexOf('Reservierung') !== -1) return false;
-        return lecture.title.indexOf('Kompetenzen') === -1;
+    lectureFilter: (lecture) => {
+        const whitelist = [
+            'Programmieren',
+            'Datenbanken',
+            'Diskrete Strukturen',
+            'Reservierung',
+            'Einführung',
+            'Grundlagen des Programmierens',
+        ];
+        const isIncluded = (s1) => (s2) => s1.includes(s2);
+        const anyTrue = (arr, cond) => arr.filter(cond).length > 0;
+        return anyTrue(whitelist, isIncluded(lecture.title));
     }
 };

@@ -7,11 +7,12 @@ import {IEvent} from './core/IEvent';
 import {ILecture} from './core/ILecture';
 
 const range = (upper: number): number[] => Array.from(Array(upper), (x, i) => i)
+const xprod = (arr1, arr2) => [].concat(...arr1.map((e1) => arr2.map((e2) => [e1, e2])));
 
-async function main(configCourse, configPrefetchWeeks, configFilter) {
+async function main(configCourses, configPrefetchWeeks, configFilter) {
     const baseDate = moment().startOf('week');
 
-    await BPromise.map(range(configPrefetchWeeks), async weeksAhead => {
+    await BPromise.map(xprod(configCourses, range(configPrefetchWeeks)), async ([configCourse, weeksAhead]) => {
         const unfilteredLectures = await SplusApi.getData(configCourse, baseDate.weeks() + weeksAhead);
         const lectures = unfilteredLectures.filter(configFilter);
 
@@ -46,4 +47,4 @@ async function main(configCourse, configPrefetchWeeks, configFilter) {
     await config.sink.commit();
 }
 
-main(config.course, config.prefetchWeeks, config.lectureFilter).catch(console.log);
+main(config.courses, config.prefetchWeeks, config.lectureFilter).catch(console.log);
