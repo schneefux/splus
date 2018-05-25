@@ -1,22 +1,29 @@
 import * as moment from 'moment';
 import * as BPromise from 'bluebird';
+import * as fs from 'fs';
 
-import {config} from './config';
 import {SplusApi} from './core/SplusApi';
 import {IEvent} from './core/IEvent';
 import {ILecture} from './core/ILecture';
+import {IcalSink} from './sinks/IcalSink';
+import {GoogleCalendarSink} from './sinks/GoogleCalendarSink';
 
-const range = (upper: number): number[] => Array.from(Array(upper), (x, i) => i)
+const range = (upper: number): number[] => Array.from(Array(upper), (x, i) => i);
 const xprod = (arr1, arr2) => [].concat(...arr1.map((e1) => arr2.map((e2) => [e1, e2])));
+const isIncluded = (s1) => (s2) => s1.includes(s2);
+const anyTrue = (arr, cond) => arr.filter(cond).length > 0;
 
-async function main(configCourses, configPrefetchWeeks, configFilter) {
+async function main(configPath) {
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    const sink = config.icsPath == undefined? new GoogleCalendarSink() : new IcalSink(config.icsPath);
+
     const baseDate = moment().startOf('week');
 
-    await BPromise.map(xprod(configCourses, range(configPrefetchWeeks)), async ([configCourse, weeksAhead]) => {
-        const unfilteredLectures = await SplusApi.getData(configCourse, baseDate.weeks() + weeksAhead);
-        const lectures = unfilteredLectures.filter(configFilter);
+    await BPromise.map(xprod(config.courses, range(config.prefetchWeeks)), async ([course, weeksAhead]) => {
+        const unfilteredLectures = await SplusApi.getData(course, baseDate.weeks() + weeksAhead);
+        const lectures = unfilteredLectures.filter(lecture => anyTrue(config.titleWhitelist, isIncluded(lecture.title)));
 
-        await BPromise.map(lectures, async lec => {
+        await BPromise.map(lectures, async (lec: ILecture) => {
             let beginDate = baseDate.clone();
             beginDate.add(moment.duration({
                 days: lec.day + 1, // for moment: 1 = Monday
@@ -38,13 +45,13 @@ async function main(configCourses, configPrefetchWeeks, configFilter) {
                 end: endDate.toDate(),
             };
 
-            await config.sink.createEvent(event);
+            await sink.createEvent(event);
 
             console.log(lec.title, beginDate.toISOString(), endDate.toISOString());
         });
     });
 
-    await config.sink.commit();
+    await sink.commit();
 }
 
-main(config.courses, config.prefetchWeeks, config.lectureFilter).catch(console.log);
+main(process.argv[2] || './config-example.json').catch(console.log);
