@@ -4,17 +4,13 @@ The [Ostfalia SPlus lecture schedule](http://splus.ostfalia.de) is complicated t
 
 ## Setup
 
-### General
+Run `npm install` to install the necessary dependencies. Copy `config-example.json`.
 
-Run `npm install` to install the necessary dependencies.
+Start with `npm start ./config.json` or export `SPLUS_CONFIG=./config.json`. `./config-example.json` is the default configuration path.
 
-### Google
+#### Google OAuth setup
 
-Follow the steps provided by Google: https://developers.google.com/calendar/auth#OAuth2Authorizing
+Follow the [steps provided by Google](https://developers.google.com/calendar/auth#OAuth2Authorizing).
 You will receive a `client_secret.json` file which contains your Google API credentials. Save this file as `etc/google/client_secret.json`.
 
-Adjust `config.ts` so that it uses the `sinks/GoogleCalendarSink`. Then run `npm start` in a terminal, visit the printed link and paste the code that will be provided there into the terminal window.
-
-### ICS
-
-Adjust `config.ts` so that it uses the `sinks/IcalSink`. Run `npm start` to generate the calendar file.
+Omit `"icsPath"` in the configuration file.
