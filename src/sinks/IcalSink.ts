@@ -20,7 +20,6 @@ export class IcalSink implements ISink {
     }
 
     createEvent(event: IEvent): Promise<void> {
-        // TODO better duplicate detection and resolve conflicts lol
         const eventId = sha256(JSON.stringify(event)).substr(0, 16);
 
         const icalEvent = this._cal.createEvent({
