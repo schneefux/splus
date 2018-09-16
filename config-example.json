@@ -3,12 +3,7 @@
     "icsPath": "kalender/informatik1.ics",
     "prefetchWeeks": 4,
 
-    "titleWhitelist": [
-        "Programmieren",
-        "Datenbanken",
-        "Diskrete Strukturen",
-        "Reservierung",
-        "Einführung",
-        "Grundlagen des Programmierens"
+    "titleBlacklist": [
+        "Programmieren"
     ]
 }
