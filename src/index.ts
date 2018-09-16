@@ -60,4 +60,4 @@ async function main(configPath) {
     fs.writeFileSync(config.icsPath, cal.toString());
 }
 
-main(process.argv[2] || './config-example.json').catch(console.log);
+main(process.env.SPLUS_CONFIG || process.argv[2] || './config-example.json').catch(console.log);

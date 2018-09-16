@@ -4,8 +4,6 @@ The [Ostfalia SPlus lecture schedule](http://splus.ostfalia.de) is complicated t
 
 ## Setup
 
-### General
+Run `npm install` to install the necessary dependencies. Copy `config-example.json`.
 
-Run `npm install` to install the necessary dependencies.
-
-Copy and adjust `config-example.json` and run `npm start config.json`.
+Start with `npm start ./config.json` or export `SPLUS_CONFIG=./config.json`. `./config-example.json` is the default configuration path.
