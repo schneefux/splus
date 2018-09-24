@@ -56,7 +56,7 @@ async function main(configPath) {
     }, { concurrency: 1 })); // splus session breaks when sending multiple concurrent calls
 
     // ref. https://www.npmjs.com/package/ical-generator
-    const cal = ical({ domain: 'ostfalia.de', events: uniqueByKey(events, 'uid') }).timezone('Europe/Berlin').toString();
+    const cal = ical({ domain: 'ostfalia.de', events: uniqueByKey(events, 'uid') }).timezone('UTC').toString();
     fs.writeFileSync(config.icsPath, cal.toString());
 }
 
