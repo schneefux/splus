@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import * as BPromise from 'bluebird';
 import * as fs from 'fs';
 import * as ical from 'ical-generator';
@@ -19,7 +19,7 @@ const uniqueByKey = (arrOfObj, key) => flatten((new Map(arrOfObj.map(obj => [obj
 
 async function main(configPath) {
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    const baseDate = moment().startOf('week');
+    const baseDate = moment().tz("Europe/Berlin").startOf('week');
 
     const events = flatten(await BPromise.map(xprod(config.courses, range(config.prefetchWeeks)), async ([course, weeksAhead]) => {
         const week = baseDate.clone().add(weeksAhead, 'weeks').weeks();
@@ -56,7 +56,7 @@ async function main(configPath) {
     }, { concurrency: 1 })); // splus session breaks when sending multiple concurrent calls
 
     // ref. https://www.npmjs.com/package/ical-generator
-    const cal = ical({ domain: 'ostfalia.de', events: uniqueByKey(events, 'uid') }).timezone('UTC').toString();
+    const cal = ical({ domain: 'ostfalia.de', events: uniqueByKey(events, 'uid') }).timezone('Europe/Berlin').toString();
     fs.writeFileSync(config.icsPath, cal.toString());
 }
 
