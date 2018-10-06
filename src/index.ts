@@ -51,12 +51,13 @@ async function main(configPath) {
                 summary: lec.title,
                 description: lec.lecturer + (lec.info !== '' ? ' - ' : '') + lec.info,
                 location: lec.room,
+                timezone: 'Europe/Berlin',
             };
         });
     }, { concurrency: 1 })); // splus session breaks when sending multiple concurrent calls
 
     // ref. https://www.npmjs.com/package/ical-generator
-    const cal = ical({ domain: 'ostfalia.de', events: uniqueByKey(events, 'uid') }).timezone('Europe/Berlin').toString();
+    const cal = ical({ domain: 'ostfalia.de', events: uniqueByKey(events, 'uid'), timezone: 'Europe/Berlin' }).toString();
     fs.writeFileSync(config.icsPath, cal.toString());
 }
 
