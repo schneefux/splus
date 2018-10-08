@@ -19,7 +19,7 @@ const uniqueByKey = (arrOfObj, key) => flatten((new Map(arrOfObj.map(obj => [obj
 
 async function main(configPath) {
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    const baseDate = moment().tz("Europe/Berlin").startOf('week');
+    const baseDate = moment().tz("Europe/Berlin").startOf('week').add(config.ignoreWeeks, 'w');
 
     const events = flatten(await BPromise.map(xprod(config.courses, range(config.prefetchWeeks)), async ([course, weeksAhead]) => {
         const week = baseDate.clone().add(weeksAhead, 'weeks').weeks();

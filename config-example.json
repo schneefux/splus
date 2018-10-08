@@ -2,6 +2,7 @@
     "courses": ["#SPLUS7A3292", "#SPLUS7A3280"],
     "icsPath": "kalender/informatik1.ics",
     "prefetchWeeks": 4,
+    "ignoreWeeks": 0,
 
     "titleBlacklist": [
         "Programmieren"
